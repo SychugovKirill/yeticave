@@ -51,7 +51,7 @@ $categories = ['Доски и лыжи', 'Крепления', 'Ботинки',
     </div>
 </header>
 
-<main class="container"><?= $content  ?></main>
+<main class="container"><?= $content ?? false  ?></main>
 
 <footer class="main-footer">
     <nav class="nav">

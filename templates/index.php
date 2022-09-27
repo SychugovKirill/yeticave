@@ -1,11 +1,6 @@
 <?php
 
-// Время до конца текущего дня
-date_default_timezone_set("Europe/Moscow");
-$time = time();
-$tomorrow = strtotime("next day, 12:00 AM");
-$result = floor($tomorrow - $time);
-$timer = gmdate('h:i', $result );
+$timer = get_time('next day, 12:00 AM');
 
 $ads = [
         [
@@ -45,10 +40,6 @@ $ads = [
                 'img'      => 'img/lot-6.jpg',
         ],
 ];
-
-function format_price($price){
-    return number_format(ceil($price), 0, false, ' ');
-}
 
 ?>
 
@@ -98,7 +89,6 @@ function format_price($price){
                         </div>
                         <div class="lot__timer timer">
                         <?= $timer ?? false ?>
-                        <?= $timer2 ?? false ?>
                         </div>
                     </div>
                 </div>

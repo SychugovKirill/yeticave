@@ -16,11 +16,26 @@ function get_template($path, $array = [])
     return $output;
 };
 
+//Время до конца текущего дня
+function get_time($day)
+{
+    date_default_timezone_set("Europe/Moscow");
+    $timer = null;
+    
+    if ($day) {
+        $time     = time();
+        $tomorrow = strtotime($day);
+        $result   = floor($tomorrow - $time);
+        $timer    = gmdate('h:i', $result);
+    }
+    
+    return $timer;
+};
 
 
-date_default_timezone_set("Europe/Moscow");
-$date = date('h:i:s');
-$date1 = strtotime($date.'+ 1 days');
-$date2 = date("h:i:s",$date1);
+function format_price($price){
+    return number_format(ceil($price), 0, false, ' ');
+};
+
 
 

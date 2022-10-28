@@ -1,17 +1,42 @@
 <?php
-$is_auth = (bool) rand(0, 1);
 
-$user_name   = 'Константин';
-$user_avatar = 'img/user.jpg';
+require_once 'functions.php';
+$lots       = require_once('config/data-lots.php');
+$categories = require_once('config/categories.php');
+$timer      = get_time('next day, 12:00 AM');
 
-$categories = require('config/categories.php');
+$lot = null;
+
+if (isset($_GET['id'])) {
+    $lot_id = $_GET['id'];
+    $lot    = $lots['items'][$lot_id] ?? false;
+}
+
+//if (isset($_GET['id'])) {
+//    $lot_id = $_GET['id'];
+//
+//    foreach ($lots['items'] as $key => $item) {
+//        $item['id'] = $key;
+//
+//        if ($item['id'] == $lot_id) {
+//            $lot = $item;
+//            break;
+//        }
+//    }
+//}
+
+if ( ! $lot) {
+    http_response_code(404);
+    header('Location: /404.php');
+}
 
 ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Главная</title>
+    <title>DC Ply Mens 2016/2017 Snowboard</title>
     <link href="css/normalize.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
@@ -20,7 +45,7 @@ $categories = require('config/categories.php');
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
-        <a class="main-header__logo">
+        <a class="main-header__logo" href="index.html">
             <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
         <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru">
@@ -28,35 +53,138 @@ $categories = require('config/categories.php');
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
         <a class="main-header__add-lot button" href="add-lot.html">Добавить лот</a>
-        
         <nav class="user-menu">
-            <?php if ($is_auth) : ?>
-                <div class="user-menu__image">
-                    <img src="<?= $user_avatar; ?>" width="40" height="40" alt="">
-                </div>
-                <div class="user-menu__logger">
-                    <p><?= $user_name; ?></p>
-                </div>
-            <?php else: ?>
-                <ul class="user-menu__list">
-                    <li class="user-menu__item">
-                        <a href="#">Регистрация</a>
-                    </li>
-                    <li class="user-menu__item">
-                        <a href="#">Вход</a>
-                    </li>
-                </ul>
-            <?php endif; ?>
+            <ul class="user-menu__list">
+                <li class="user-menu__item">
+                    <a href="sign-up.html">Регистрация</a>
+                </li>
+                <li class="user-menu__item">
+                    <a href="login.html">Вход</a>
+                </li>
+            </ul>
         </nav>
     </div>
 </header>
 
-<main class="container"><?= $content ?? false ?></main>
+<main>
+    <nav class="nav">
+        <ul class="nav__list container">
+            <?php foreach ($categories as $category) : ?>
+                <li class="nav__item">
+                    <a href="all-lots.html">Доски и лыжи</a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </nav>
+    <section class="lot-item container">
+        <h2><?= $lot['title'] ?></h2>
+        <div class="lot-item__content">
+            <div class="lot-item__left">
+                <div class="lot-item__image">
+                    <img src="<?= $lot['img'] ?>" width="730" height="548" alt="Сноуборд">
+                </div>
+                <p class="lot-item__category">Категория: <span><?= $lot['category'] ?></span></p>
+                <p class="lot-item__description">Легкий маневренный сноуборд, готовый дать жару в любом парке, растопив
+                                                 снег
+                                                 мощным щелчком и четкими дугами. Стекловолокно Bi-Ax, уложенное в двух
+                                                 направлениях, наделяет этот
+                                                 снаряд
+                                                 отличной гибкостью и отзывчивостью, а симметричная геометрия в
+                                                 сочетании с классическим прогибом
+                                                 кэмбер
+                                                 позволит уверенно держать высокие скорости. А если к концу катального
+                                                 дня сил совсем не останется,
+                                                 просто
+                                                 посмотрите на Вашу доску и улыбнитесь, крутая графика от Шона Кливера
+                                                 еще никого не оставляла
+                                                 равнодушным.</p>
+            </div>
+            <div class="lot-item__right">
+                <div class="lot-item__state">
+                    <div class="lot-item__timer timer">
+                        <?= $timer ?? false ?>
+                    </div>
+                    <div class="lot-item__cost-state">
+                        <div class="lot-item__rate">
+                            <span class="lot-item__amount">Текущая цена</span>
+                            <span class="lot-item__cost"><?= format_price($lot['price']) ?><b class="rub">р</b></span>
+                        </div>
+                        <div class="lot-item__min-cost">
+                            Мин. ставка <span>12 000 р</span>
+                        </div>
+                    </div>
+                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post">
+                        <p class="lot-item__form-item">
+                            <label for="cost">Ваша ставка</label>
+                            <input id="cost" type="number" name="cost" placeholder="12 000">
+                        </p>
+                        <button type="submit" class="button">Сделать ставку</button>
+                    </form>
+                </div>
+                <div class="history">
+                    <h3>История ставок (<span>10</span>)</h3>
+                    <table class="history__list">
+                        <tr class="history__item">
+                            <td class="history__name">Иван</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">5 минут назад</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Константин</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">20 минут назад</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Евгений</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">Час назад</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Игорь</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 08:21</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Енакентий</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 13:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Семён</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 12:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Илья</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 10:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Енакентий</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 13:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Семён</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 12:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Илья</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 10:20</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 
 <footer class="main-footer">
     <nav class="nav">
         <ul class="nav__list container">
-            <?php foreach ($categories as $category): ?>
+            <?php foreach ($categories as $category) : ?>
                 <li class="nav__item">
                     <a href="all-lots.html"><?= $category ?></a>
                 </li>
@@ -65,7 +193,7 @@ $categories = require('config/categories.php');
     </nav>
     <div class="main-footer__bottom container">
         <div class="main-footer__copyright">
-            <p>© 2018, YetiCave</p>
+            <p>© 2017, YetiCave</p>
             <p>Интернет-аукцион сноубордического и горнолыжного снаряжения</p>
         </div>
         <div class="main-footer__social social">

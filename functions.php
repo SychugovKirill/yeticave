@@ -37,6 +37,16 @@ function format_price($price){
     return number_format(ceil($price), 0, false, ' ');
 };
 
+function clear_data($value) {
+    $value = trim($value); // удаляет пробелы
+    $value = stripcslashes($value); // удаляет экранирование (слеши)
+    $value = strip_tags($value, '<br>'); // Удаляет теги HTML и PHP
+    $value = htmlspecialchars($value); // Преобразует специальные символы в HTML-сущности
+    return $value;
+}
+
+
+
 
 
 

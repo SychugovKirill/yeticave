@@ -5,7 +5,7 @@ $user_name   = 'Константин';
 $user_avatar = 'img/user.jpg';
 
 $categories = require('config/categories.php');
-
+$active_logo = $active_logo ?? true;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -20,14 +20,20 @@ $categories = require('config/categories.php');
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
-        <a class="main-header__logo">
-            <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
-        </a>
+        <?php if ($active_logo): ?>
+            <a class="main-header__logo" href="index.php">
+                <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
+            </a>
+        <?php else: ?>
+            <a class="main-header__logo">
+                <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
+            </a>
+        <?php endif; ?>
         <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru">
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="add-lot.html">Добавить лот</a>
+        <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
         
         <nav class="user-menu">
             <?php if ($is_auth) : ?>
@@ -51,7 +57,8 @@ $categories = require('config/categories.php');
     </div>
 </header>
 
-<main class="container"><?= $content ?? false ?></main>
+
+<?= $content ?? false ?>
 
 <footer class="main-footer">
     <nav class="nav">

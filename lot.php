@@ -1,8 +1,8 @@
 <?php
 
 require_once 'functions.php';
-$lots       = require_once('config/data-lots.php');
-$categories = require_once('config/categories.php');
+$lots       = require_once __DIR__ . '/config/data-lots.php';
+$categories = require_once __DIR__ . '/config/categories.php';
 $timer      = get_time('next day, 12:00 AM');
 
 $lot = null;
@@ -10,6 +10,20 @@ $lot = null;
 if (isset($_GET['id'])) {
     $lot_id = $_GET['id'];
     $lot    = $lots['items'][$lot_id] ?? false;
+}
+
+$id = clear_data($_GET['id']);
+
+if (isset($_COOKIE['id'])) {
+    $ids = unserialize($_COOKIE['id']);
+    
+    if ( ! in_array($id, $ids)) {
+        $ids[] = $id;
+        setcookie('id', serialize($ids), time() + (3600 *24 * 30));
+    }
+} else {
+    $ids[] = $id;
+    setcookie('id', serialize($ids), time() + (3600 *24 * 30));
 }
 
 //if (isset($_GET['id'])) {
